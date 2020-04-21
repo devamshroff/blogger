@@ -5,7 +5,13 @@
     <title>List Posts</title>
 </head>
 <body>
-<button type="submit" name="action" value="open">New Post</button>
+<div>
+    <form action="post" id="0">
+        <input type="hidden" name="username" value="${username}">
+        <input type="hidden" name="postid" value="0">
+        <button type="submit" name="action" value="open">New Post</button>
+    </form>
+</div>
     <table>
         <tr>
             <th>Title</th>
@@ -13,6 +19,20 @@
             <th>Modified</th>
             <th>&nbsp;</th>
         </tr>
+        <c:forEach begin="0" end="${titles.size()-1}" varStatus="loop">
+            <tr>
+            <%-- title --%>
+            <td><c:out value="${titles.get(loop.count-1)}"/></td>
+            <%-- date created --%>
+            <td><c:out value="${dates_created.get(loop.count-1)}"/></td>
+            <%-- date modified --%>
+            <td><c:out value="${dates_modified.get(loop.count-1)}"/></td>
+            <td>
+                <button type="submit" name="action" value="open">Open</button>
+                <button type="submit" name="action" value="delete">Delete</button>         
+            </td>
+            </tr>
+        </c:forEach> 
     </table>
 </body>
 </html>
