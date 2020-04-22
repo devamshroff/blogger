@@ -28,8 +28,13 @@
             <%-- date modified --%>
             <td><c:out value="${dates_modified.get(loop.count-1)}"/></td>
             <td>
-                <button type="submit" name="action" value="open">Open</button>
-                <button type="submit" name="action" value="delete">Delete</button>         
+                <form action="/editor/post?username=${username}&postid=${post_ids.get(loop.count-1)}&action=open" method="POST">
+                    <button type="submit" name="action" value="open">Open</button>
+                </form>
+                <%-- TODO: deleting stuff from database. don't wanna do it yet cause we don't have add functionality. --%>
+                <form action="/editor/post?username=${username}&action=delete" method="POST">
+                    <button type="submit" name="action" value="delete">Delete</button>
+                </form>
             </td>
             </tr>
         </c:forEach> 

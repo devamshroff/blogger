@@ -14,12 +14,13 @@
             <button type="submit">Delete</button>
         </div>
         <div>
+
             <label for="title">Title</label>
-            <input type="text" id="title">
+            <input type="text" id="title" value="${title}"> 
         </div>
         <div>
             <label for="body">Body</label>
-            <textarea style="height: 20rem;" id="body"></textarea>
+            <textarea style="height: 20rem;" id="body">${body}</textarea>
         </div>
     </form>
 </body>
