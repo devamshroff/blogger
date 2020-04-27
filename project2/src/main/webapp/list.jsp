@@ -20,7 +20,7 @@
             <th>&nbsp;</th>
         </tr>
         <%-- we only attempt to display the articles if we have any for that user --%>
-        <c:if test = "${titles.size() == 1}"> 
+        <c:if test = "${titles.size() >= 1}"> 
         <c:forEach begin="0" end="${titles.size()-1}" varStatus="loop">
             <tr>
             <%-- title --%>
