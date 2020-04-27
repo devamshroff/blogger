@@ -6,21 +6,24 @@
 </head>
 <body>
     <div><h1>Edit Post</h1></div>
-    <form>
+    <form action="post" method="POST">
         <div>
-            <button type="submit">Save</button>
-            <button type="submit">Close</button>
-            <button type="submit">Preview</button>
-            <button type="submit">Delete</button>
+            <input type="hidden" id="postid"  name="postid" value="${param.postid}"> 
+            <input type="hidden" id="username" name="username" value="${param.username}"> 
         </div>
         <div>
-
+            <button type="submit" name="action" value="save">Save</button>
+            <button type="submit" name="action" value="close">Close</button>
+            <button type="submit" name="action" value="preview">Preview</button>
+            <button type="submit" name="action" value="delete">Delete</button>
+        </div>
+        <div>
             <label for="title">Title</label>
-            <input type="text" id="title" value="${title}"> 
+            <input type="text" id="title" name="title" value='<%= request.getAttribute("title") %>'> 
         </div>
         <div>
             <label for="body">Body</label>
-            <textarea style="height: 20rem;" id="body">${body}</textarea>
+            <textarea style="height: 20rem;" id="body" name="body"><%= request.getAttribute("body") %></textarea>
         </div>
     </form>
 </body>

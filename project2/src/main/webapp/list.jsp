@@ -6,7 +6,7 @@
 </head>
 <body>
 <div>
-    <form action="post" id="0">
+    <form action="post" id="0" method="POST">
         <input type="hidden" name="username" value="${username}">
         <input type="hidden" name="postid" value="0">
         <button type="submit" name="action" value="open">New Post</button>
@@ -19,6 +19,8 @@
             <th>Modified</th>
             <th>&nbsp;</th>
         </tr>
+        <%-- we only attempt to display the articles if we have any for that user --%>
+        <c:if test = "${titles.size() == 1}"> 
         <c:forEach begin="0" end="${titles.size()-1}" varStatus="loop">
             <tr>
             <%-- title --%>
@@ -37,7 +39,9 @@
                 </form>
             </td>
             </tr>
-        </c:forEach> 
-    </table>
+        </c:forEach>
+        </c:if>
+          </table>
+       
 </body>
 </html>

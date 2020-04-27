@@ -2,7 +2,8 @@ import java.io.IOException;
 import java.sql.* ;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Date;
+import java.text.SimpleDateFormat;  
+import java.util.Date;  
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -92,14 +93,38 @@ public class Editor extends HttpServlet {
         String action = request.getParameter("action");
         String username = request.getParameter("username");
         String cmd = "";
-        if (action.equals("list")){
+        if (action.equals("list") || action.equals("close")){
             generateList(request, response);
         }
+        // else if (action.equals("delete"))
+        // {
+        //     delete(request, response);
+        // }
         else if(action.equals("open")){
             // openEditor(request, response);
             // getting database connection
             
             openEditor(request, response);
+        }
+        else if(action.equals("preview")){
+            username = request.getParameter("username");
+            String title = request.getParameter("title");
+            String postid = request.getParameter("postid");
+            String body = request.getParameter("body");
+        
+            for (int i= 0;i<postid.length();i++)
+            {
+                if (!(Character.isDigit(postid.charAt(i))))
+                // Are we supposed to send a request
+                    System.out.println("PostId not valid");
+            }
+            Parser parser = Parser.builder().build();
+            HtmlRenderer renderer = HtmlRenderer.builder().build();
+            String postTitle = renderer.render(parser.parse(title));
+            String postBody = renderer.render(parser.parse(body));
+            request.setAttribute("postTitle",postTitle);
+            request.setAttribute("postBody",postBody);
+            request.getRequestDispatcher("/preview.jsp").forward(request, response);
         }
     }
         
@@ -180,6 +205,7 @@ public class Editor extends HttpServlet {
                 ex = ex.getNextException();
                 }
         }
+      
         request.setAttribute("titles", titles);
         request.setAttribute("dates_created", dates_created);
         request.setAttribute("dates_modified", dates_modified);
@@ -189,7 +215,73 @@ public class Editor extends HttpServlet {
         // request.setAttribute("nBlogs", titles.size())
         request.getRequestDispatcher("/list.jsp").forward(request, response);
     }    
+    public void delete(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException 
+    {
+        // getting database connection
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+        } catch (ClassNotFoundException ex) {
+            System.out.println(ex);
+            return;
+        }
 
+        Connection c = null;
+        Statement  s = null; 
+        ResultSet rs = null; 
+
+        try {
+    
+            /* create an instance of a Connection object */
+            c = DriverManager.getConnection("jdbc:mysql://localhost:3306/CS144", "cs144", ""); 
+			s = c.createStatement();
+			/* You can think of a JDBC Statement object as a channel
+			sitting on a connection, and passing one or more of your
+			SQL statements (which you ask it to execute) to the DBMS*/
+
+            }
+        catch (SQLException ex){
+            System.out.println("SQLException caught");
+            System.out.println("---");
+            while ( ex != null ) {
+                System.out.println("Message   : " + ex.getMessage());
+                System.out.println("SQLState  : " + ex.getSQLState());
+                System.out.println("ErrorCode : " + ex.getErrorCode());
+                System.out.println("---");
+                ex = ex.getNextException();
+            }
+        }
+
+        String action = request.getParameter("action");
+        String username = request.getParameter("username");
+        String cmd = "";
+
+        int postid = Integer.parseInt(request.getParameter("postid"));
+        String title = "";
+        String date_created = "";
+        String date_modified = "";
+        String body = "";
+
+        // we query all the articles from the page with that username
+        
+        try {
+            cmd = "DELETE FROM Posts WHERE username = '" + username + "' AND postid = '" + postid + "';"; 
+            rs = s.executeQuery(cmd);
+        }
+        catch (SQLException ex){
+            System.out.println("SQLException caught");
+            System.out.println("---");
+            while ( ex != null ) {
+                System.out.println("Message   : " + ex.getMessage());
+                System.out.println("SQLState  : " + ex.getSQLState());
+                System.out.println("ErrorCode : " + ex.getErrorCode());
+                System.out.println("---");
+                ex = ex.getNextException();
+                }
+        }
+        generateList(request, response); 
+
+    }
 
      public void openEditor(HttpServletRequest request, HttpServletResponse response)
         throws ServletException, IOException 
@@ -283,95 +375,192 @@ public class Editor extends HttpServlet {
             // execute deletion code here
 
         }
-        if(action.equals("list") || action.equals("delete")){
-                
-            // ArrayList<String> titles = new ArrayList<String>();
-            // ArrayList<String> dates_created = new ArrayList<String>();
-            // ArrayList<String> dates_modified = new ArrayList<String>();
-            // ArrayList<String> post_ids = new ArrayList<String>();
-
-            // // we query all the articles from the page with that username
-            
-            // try {
-            //     cmd = "SELECT * FROM Posts WHERE username = '" + username + "' ORDER BY postid;"; 
-            //     rs = s.executeQuery(cmd);
-
-            //     // unpack the results
-            //     while (rs.next()){
-            //         titles.add(rs.getString("title"));
-            //         dates_created.add(rs.getString("created"));
-            //         dates_modified.add(rs.getString("modified"));
-            //         post_ids.add(rs.getString("postid"));
-            //     }
-            // }
-            // catch (SQLException ex){
-            //     System.out.println("SQLException caught");
-            //     System.out.println("---");
-            //     while ( ex != null ) {
-            //         System.out.println("Message   : " + ex.getMessage());
-            //         System.out.println("SQLState  : " + ex.getSQLState());
-            //         System.out.println("ErrorCode : " + ex.getErrorCode());
-            //         System.out.println("---");
-            //         ex = ex.getNextException();
-            //         }
-            // }
-            // request.setAttribute("titles", titles);
-            // request.setAttribute("dates_created", dates_created);
-            // request.setAttribute("dates_modified", dates_modified);
-            // request.setAttribute("post_ids", post_ids);
-            // request.setAttribute("username", username);
-            // request.setAttribute("action", "list");
-            // // request.setAttribute("nBlogs", titles.size())
-            // request.getRequestDispatcher("/list.jsp").forward(request, response);
+        if(action.equals("list") || action.equals("close")){
             generateList(request, response);
-
+        }
+        else if (action.equals("save"))
+        {
+            save(request,response);
+        }
+        else if (action.equals("delete"))
+        {
+            delete(request, response);
         }
         else if(action.equals("open")){
-            // getting database connection
-        
-
-            // int postid = Integer.parseInt(request.getParameter("postid"));
-            // String title = "";
-            // String date_created = "";
-            // String date_modified = "";
-            // String body = "";
-
-            // // we query all the articles from the page with that username
-            
-            // try {
-            //     // cmd = "SELECT * FROM Posts WHERE username = '" + username + "' AND postid = '" + postid + "';"; 
-            //     cmd = "SELECT * FROM Posts WHERE username = '" + username + "' ORDER BY postid;"; 
-            //     rs = s.executeQuery(cmd);
-
-            //     // unpack the results
-            //     title = rs.getString("title");
-            //     date_created = rs.getString("created");
-            //     date_modified = rs.getString("modified");
-            //     body = rs.getString("body");
-            // }
-            // catch (SQLException ex){
-            //     System.out.println("SQLException caught");
-            //     System.out.println("---");
-            //     while ( ex != null ) {
-            //         System.out.println("Message   : " + ex.getMessage());
-            //         System.out.println("SQLState  : " + ex.getSQLState());
-            //         System.out.println("ErrorCode : " + ex.getErrorCode());
-            //         System.out.println("---");
-            //         ex = ex.getNextException();
-            //         }
-            // } 
-
-            // request.setAttribute("title", title);
-            // request.setAttribute("date_created", date_created);
-            // request.setAttribute("date_modified", date_modified);
-            // request.setAttribute("postid", postid);
-            // request.getRequestDispatcher("/edit.jsp").forward(request, response);
             openEditor(request, response);
         }
         else if(action.equals("preview")){
-            // add preview code here
-
+            String username = request.getParameter("username");
+            String title = request.getParameter("title");
+            String postid = request.getParameter("postid");
+            String body = request.getParameter("body");
+        
+            for (int i= 0;i<postid.length();i++)
+            {
+                if (!(Character.isDigit(postid.charAt(i))))
+                // Are we supposed to send a request
+                    System.out.println("PostId not valid");
+            }
+            Parser parser = Parser.builder().build();
+            HtmlRenderer renderer = HtmlRenderer.builder().build();
+            String postTitle = renderer.render(parser.parse(title));
+            String postBody = renderer.render(parser.parse(body));
+            request.setAttribute("postTitle",postTitle);
+            request.setAttribute("postBody",postBody);
+            request.getRequestDispatcher("/preview.jsp").forward(request, response);
         }
+    }
+    public void save(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException
+    {
+                // getting database connection
+                try {
+                    Class.forName("com.mysql.jdbc.Driver");
+                } catch (ClassNotFoundException ex) {
+                    System.out.println(ex);
+                    return;
+                }
+                
+                Connection c = null;
+                PreparedStatement  s = null; 
+                ResultSet rs = null; 
+        
+                try {
+            
+                    /* create an instance of a Connection object */
+                    c = DriverManager.getConnection("jdbc:mysql://localhost:3306/CS144", "cs144", ""); 
+                    
+                    /* You can think of a JDBC Statement object as a channel
+                    sitting on a connection, and passing one or more of your
+                    SQL statements (which you ask it to execute) to the DBMS*/
+        
+                    }
+                catch (SQLException ex){
+                    System.out.println("SQLException caught");
+                    System.out.println("---");
+                    while ( ex != null ) {
+                        System.out.println("Message   : " + ex.getMessage());
+                        System.out.println("SQLState  : " + ex.getSQLState());
+                        System.out.println("ErrorCode : " + ex.getErrorCode());
+                        System.out.println("---");
+                        ex = ex.getNextException();
+                    }
+                }
+                
+                String action = request.getParameter("action");
+                String username = request.getParameter("username");
+                String cmd = "";
+                String cmd1  = "";
+                String title = request.getParameter("title");
+                String body = request.getParameter("body");
+                int postid = Integer.parseInt(request.getParameter("postid"));
+                String date_created = "";
+                String date_modified = "";
+                if (title == null)
+                {
+                    title = ""; 
+                }
+                if (body == null)
+                {
+                    body  = "";
+                }
+                Date date = new Date();
+                Timestamp current = new Timestamp(date.getTime());
+                if (postid<=0)
+                {
+                    
+                    try {
+                        
+                        
+                        s = c.prepareStatement("SELECT MAX(postid) AS max_p_id FROM Posts;");
+                        rs = s.executeQuery();
+                        int max_id =  0;
+                        
+                        if (!rs.next())
+                        {
+                            max_id = 0;
+                            
+                        }
+                        else
+                        {
+                            max_id = rs.getInt("max_p_id")+1;
+                            
+                        }
+                        
+                            
+                        
+                        s = c.prepareStatement("INSERT INTO Posts (username,postid,title,body,modified,created)"
+                        + "VALUES ( ? , ? , ? , ? ,NOW(),NOW());");
+                        s.setString(1,username);
+                        s.setInt(2, max_id);
+                        s.setString(3,title);
+                        s.setString(4,body);
+                        s.executeUpdate();
+                        
+                        
+                        
+                        
+                    }
+                    catch (SQLException ex){
+                        System.out.println("SQLException caught");
+                        System.out.println("---");
+                        while ( ex != null ) {
+                            System.err.println("Message   : " + ex.getMessage());
+                            System.err.println("SQLState  : " + ex.getSQLState());
+                            System.err.println("ErrorCode : " + ex.getErrorCode());
+                            System.err.println("---");
+                            ex = ex.getNextException();
+                            }
+                    }
+                    generateList(request, response);
+                }
+                else
+                {
+                    
+                    try {
+                        // int y =Integer.parseInt("test 3");
+                        s = c.prepareStatement("SELECT * FROM Posts WHERE username = ? AND postid = ?");
+                        s.setString(1,username);
+                        s.setInt(2, postid);
+                        s.executeUpdate();
+                        
+                        if (!rs.next())
+                            //send 404
+                            System.out.println("Send 404");
+                        else
+                            date_created = rs.getString("created");
+
+                        s = c.prepareStatement("DELETE FROM Posts WHERE username = ? AND postid = ?;");
+                        s.setString(1,username);
+                        s.setInt(2, postid);
+                        s.executeUpdate();
+                        
+                        // s = c.prepareStatement("INSERT INTO Posts (username,postid,title,body,modified,created)"
+                        // + "VALUES ( ? , ? , ? , ? ,NOW(),?);");
+                        // s.setString(1,username);
+                        // s.setInt(2, postid);
+                        // s.setString(3,title);
+                        // s.setString(4,body);
+                        // s.setString(6, date_created);
+                        // s.executeUpdate();
+                    }
+                    catch (SQLException ex){
+                        System.out.println("SQLException caught");
+                        System.out.println("---");
+                        while ( ex != null ) {
+                            System.out.println("Message   : " + ex.getMessage());
+                            System.out.println("SQLState  : " + ex.getSQLState());
+                            System.out.println("ErrorCode : " + ex.getErrorCode());
+                            System.out.println("---");
+                            ex = ex.getNextException();
+                            }
+                    }
+                    generateList(request, response);
+                }
+        
+                // we query all the articles from the page with that username
+                
+
     }
 }
 
