@@ -124,6 +124,7 @@ public class Editor extends HttpServlet {
                 // Are we supposed to send a request
                 {
                     send404(request, response);
+                    return;
                     
                 }
             }
@@ -133,6 +134,7 @@ public class Editor extends HttpServlet {
             String postBody = renderer.render(parser.parse(body));
             request.setAttribute("postTitle",postTitle);
             request.setAttribute("postBody",postBody);
+          
             request.getRequestDispatcher("/preview.jsp").forward(request, response);
         }
     }
@@ -344,10 +346,19 @@ public class Editor extends HttpServlet {
         String cmd = "";
 
         int postid = Integer.parseInt(request.getParameter("postid"));
-        String title = "";
+        String title = request.getParameter("title");
+        String body = request.getParameter("body");
+        if (title == null)
+        {
+            title = "";
+        }
+        if (body == null)
+        {
+            body ="";
+        }
         String date_created = "";
         String date_modified = "";
-        String body = "";
+        
         if (postid <= 0){
             request.setAttribute("title",title);
             request.setAttribute("body",body);
@@ -427,7 +438,8 @@ public class Editor extends HttpServlet {
             {
                 if (!(Character.isDigit(postid.charAt(i))))
                 {
-                send404(request, response);
+                    send404(request, response);
+                    return;
                 
                 }
             }
@@ -437,6 +449,7 @@ public class Editor extends HttpServlet {
             String postBody = renderer.render(parser.parse(body));
             request.setAttribute("postTitle",postTitle);
             request.setAttribute("postBody",postBody);
+            
             request.getRequestDispatcher("/preview.jsp").forward(request, response);
         }
     }
