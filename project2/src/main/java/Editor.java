@@ -43,6 +43,12 @@ public class Editor extends HttpServlet {
     {
         /*  write any servlet cleanup code here or remove this function */
     }
+    public void send404(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException 
+    {
+        response.sendError(HttpServletResponse.SC_NOT_FOUND);
+        return;
+    }   
 
     /**
      * Handles HTTP GET requests
@@ -116,7 +122,11 @@ public class Editor extends HttpServlet {
             {
                 if (!(Character.isDigit(postid.charAt(i))))
                 // Are we supposed to send a request
-                    System.out.println("PostId not valid");
+                {
+                    send404(request, response);
+                    return;
+                    
+                }
             }
             Parser parser = Parser.builder().build();
             HtmlRenderer renderer = HtmlRenderer.builder().build();
@@ -124,6 +134,7 @@ public class Editor extends HttpServlet {
             String postBody = renderer.render(parser.parse(body));
             request.setAttribute("postTitle",postTitle);
             request.setAttribute("postBody",postBody);
+          
             request.getRequestDispatcher("/preview.jsp").forward(request, response);
         }
     }
@@ -227,14 +238,13 @@ public class Editor extends HttpServlet {
         }
 
         Connection c = null;
-        Statement  s = null; 
+        PreparedStatement  s = null; 
         ResultSet rs = null; 
 
         try {
     
             /* create an instance of a Connection object */
             c = DriverManager.getConnection("jdbc:mysql://localhost:3306/CS144", "cs144", ""); 
-			s = c.createStatement();
 			/* You can think of a JDBC Statement object as a channel
 			sitting on a connection, and passing one or more of your
 			SQL statements (which you ask it to execute) to the DBMS*/
@@ -261,12 +271,19 @@ public class Editor extends HttpServlet {
         String date_created = "";
         String date_modified = "";
         String body = "";
+        if(username.equals("") || request.getParameter("postid").equals("")){
+            send404(request, response);
+            return;
+        }
+
 
         // we query all the articles from the page with that username
         
         try {
-            cmd = "DELETE FROM Posts WHERE username = '" + username + "' AND postid = '" + postid + "';"; 
-            rs = s.executeQuery(cmd);
+            s = c.prepareStatement("DELETE FROM Posts WHERE username = ? AND postid = ?;");
+            s.setString(1,username);
+            s.setInt(2, postid);
+            s.executeUpdate();
         }
         catch (SQLException ex){
             System.out.println("SQLException caught");
@@ -322,14 +339,32 @@ public class Editor extends HttpServlet {
 
         String action = request.getParameter("action");
         String username = request.getParameter("username");
+        if(username.equals("")){
+            send404(request, response);
+            return;
+        }
         String cmd = "";
 
         int postid = Integer.parseInt(request.getParameter("postid"));
-        String title = "";
+        String title = request.getParameter("title");
+        String body = request.getParameter("body");
+        if (title == null)
+        {
+            title = "";
+        }
+        if (body == null)
+        {
+            body ="";
+        }
         String date_created = "";
         String date_modified = "";
-        String body = "";
-
+        
+        if (postid <= 0){
+            request.setAttribute("title",title);
+            request.setAttribute("body",body);
+            request.getRequestDispatcher("/edit.jsp").forward(request, response);
+            return;
+        }
         // we query all the articles from the page with that username
         
         try {
@@ -355,6 +390,11 @@ public class Editor extends HttpServlet {
                 ex = ex.getNextException();
                 }
         } 
+        if (date_created.equals("")){ //this means that the post id does not exist
+            send404(request, response);
+            return;
+        }
+
         request.setAttribute("title-len", title.length());
         request.setAttribute("title", title);
         request.setAttribute("date_created", date_created);
@@ -394,12 +434,14 @@ public class Editor extends HttpServlet {
             String title = request.getParameter("title");
             String postid = request.getParameter("postid");
             String body = request.getParameter("body");
-        
             for (int i= 0;i<postid.length();i++)
             {
                 if (!(Character.isDigit(postid.charAt(i))))
-                // Are we supposed to send a request
-                    System.out.println("PostId not valid");
+                {
+                    send404(request, response);
+                    return;
+                
+                }
             }
             Parser parser = Parser.builder().build();
             HtmlRenderer renderer = HtmlRenderer.builder().build();
@@ -407,6 +449,7 @@ public class Editor extends HttpServlet {
             String postBody = renderer.render(parser.parse(body));
             request.setAttribute("postTitle",postTitle);
             request.setAttribute("postBody",postBody);
+            
             request.getRequestDispatcher("/preview.jsp").forward(request, response);
         }
     }
@@ -456,6 +499,10 @@ public class Editor extends HttpServlet {
                 int postid = Integer.parseInt(request.getParameter("postid"));
                 String date_created = "";
                 String date_modified = "";
+                if(username.equals("") || request.getParameter("postid").equals("") || title.equals("")){
+                    send404(request, response);
+                    return;
+                }
                 if (title == null)
                 {
                     title = ""; 
@@ -518,31 +565,28 @@ public class Editor extends HttpServlet {
                 {
                     
                     try {
-                        // int y =Integer.parseInt("test 3");
-                        s = c.prepareStatement("SELECT * FROM Posts WHERE username = ? AND postid = ?");
+                        
+                        s = c.prepareStatement("SELECT * FROM Posts WHERE username =? AND postid=?;");
                         s.setString(1,username);
                         s.setInt(2, postid);
-                        s.executeUpdate();
+                        rs= s.executeQuery();
                         
                         if (!rs.next())
-                            //send 404
-                            System.out.println("Send 404");
-                        else
-                            date_created = rs.getString("created");
+                        {
+                            send404(request, response);
+                            return;
 
-                        s = c.prepareStatement("DELETE FROM Posts WHERE username = ? AND postid = ?;");
-                        s.setString(1,username);
-                        s.setInt(2, postid);
+                        }
+                        
+
+                        s = c.prepareStatement("UPDATE Posts SET title=?,body=?,modified=NOW() WHERE username =? AND postid =?;");
+                        s.setString(1,title);
+                        s.setString(2, body);
+                        s.setString(3,username);
+                        s.setInt(4,postid);
                         s.executeUpdate();
                         
-                        // s = c.prepareStatement("INSERT INTO Posts (username,postid,title,body,modified,created)"
-                        // + "VALUES ( ? , ? , ? , ? ,NOW(),?);");
-                        // s.setString(1,username);
-                        // s.setInt(2, postid);
-                        // s.setString(3,title);
-                        // s.setString(4,body);
-                        // s.setString(6, date_created);
-                        // s.executeUpdate();
+                        
                     }
                     catch (SQLException ex){
                         System.out.println("SQLException caught");

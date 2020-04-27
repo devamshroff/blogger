@@ -34,7 +34,7 @@
                     <button type="submit" name="action" value="open">Open</button>
                 </form>
                 <%-- TODO: deleting stuff from database. don't wanna do it yet cause we don't have add functionality. --%>
-                <form action="/editor/post?username=${username}&action=delete" method="POST">
+                <form action="/editor/post?username=${username}&postid=${post_ids.get(loop.count-1)}&action=delete" method="POST">
                     <button type="submit" name="action" value="delete">Delete</button>
                 </form>
             </td>
