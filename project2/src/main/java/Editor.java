@@ -227,14 +227,13 @@ public class Editor extends HttpServlet {
         }
 
         Connection c = null;
-        Statement  s = null; 
+        PreparedStatement  s = null; 
         ResultSet rs = null; 
 
         try {
     
             /* create an instance of a Connection object */
             c = DriverManager.getConnection("jdbc:mysql://localhost:3306/CS144", "cs144", ""); 
-			s = c.createStatement();
 			/* You can think of a JDBC Statement object as a channel
 			sitting on a connection, and passing one or more of your
 			SQL statements (which you ask it to execute) to the DBMS*/
@@ -265,8 +264,10 @@ public class Editor extends HttpServlet {
         // we query all the articles from the page with that username
         
         try {
-            cmd = "DELETE FROM Posts WHERE username = '" + username + "' AND postid = '" + postid + "';"; 
-            rs = s.executeQuery(cmd);
+            s = c.prepareStatement("DELETE FROM Posts WHERE username = ? AND postid = ?;");
+            s.setString(1,username);
+            s.setInt(2, postid);
+            s.executeUpdate();
         }
         catch (SQLException ex){
             System.out.println("SQLException caught");
@@ -518,31 +519,25 @@ public class Editor extends HttpServlet {
                 {
                     
                     try {
-                        // int y =Integer.parseInt("test 3");
-                        s = c.prepareStatement("SELECT * FROM Posts WHERE username = ? AND postid = ?");
+                        
+                        s = c.prepareStatement("SELECT * FROM Posts WHERE username =? AND postid=?;");
                         s.setString(1,username);
                         s.setInt(2, postid);
-                        s.executeUpdate();
+                        rs= s.executeQuery();
                         
                         if (!rs.next())
                             //send 404
                             System.out.println("Send 404");
-                        else
-                            date_created = rs.getString("created");
+                        
 
-                        s = c.prepareStatement("DELETE FROM Posts WHERE username = ? AND postid = ?;");
-                        s.setString(1,username);
-                        s.setInt(2, postid);
+                        s = c.prepareStatement("UPDATE Posts SET title=?,body=?,modified=NOW() WHERE username =? AND postid =?;");
+                        s.setString(1,title);
+                        s.setString(2, body);
+                        s.setString(3,username);
+                        s.setInt(4,postid);
                         s.executeUpdate();
                         
-                        // s = c.prepareStatement("INSERT INTO Posts (username,postid,title,body,modified,created)"
-                        // + "VALUES ( ? , ? , ? , ? ,NOW(),?);");
-                        // s.setString(1,username);
-                        // s.setInt(2, postid);
-                        // s.setString(3,title);
-                        // s.setString(4,body);
-                        // s.setString(6, date_created);
-                        // s.executeUpdate();
+                        
                     }
                     catch (SQLException ex){
                         System.out.println("SQLException caught");
