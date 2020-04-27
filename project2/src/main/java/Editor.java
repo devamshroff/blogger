@@ -43,6 +43,12 @@ public class Editor extends HttpServlet {
     {
         /*  write any servlet cleanup code here or remove this function */
     }
+    public void send404(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException 
+    {
+        response.sendError(HttpServletResponse.SC_NOT_FOUND);
+        return;
+    }   
 
     /**
      * Handles HTTP GET requests
@@ -116,7 +122,10 @@ public class Editor extends HttpServlet {
             {
                 if (!(Character.isDigit(postid.charAt(i))))
                 // Are we supposed to send a request
-                    System.out.println("PostId not valid");
+                {
+                    send404(request, response);
+                    
+                }
             }
             Parser parser = Parser.builder().build();
             HtmlRenderer renderer = HtmlRenderer.builder().build();
@@ -260,6 +269,11 @@ public class Editor extends HttpServlet {
         String date_created = "";
         String date_modified = "";
         String body = "";
+        if(username.equals("") || request.getParameter("postid").equals("")){
+            send404(request, response);
+            return;
+        }
+
 
         // we query all the articles from the page with that username
         
@@ -323,6 +337,10 @@ public class Editor extends HttpServlet {
 
         String action = request.getParameter("action");
         String username = request.getParameter("username");
+        if(username.equals("")){
+            send404(request, response);
+            return;
+        }
         String cmd = "";
 
         int postid = Integer.parseInt(request.getParameter("postid"));
@@ -330,7 +348,12 @@ public class Editor extends HttpServlet {
         String date_created = "";
         String date_modified = "";
         String body = "";
-
+        if (postid <= 0){
+            request.setAttribute("title",title);
+            request.setAttribute("body",body);
+            request.getRequestDispatcher("/edit.jsp").forward(request, response);
+            return;
+        }
         // we query all the articles from the page with that username
         
         try {
@@ -356,6 +379,11 @@ public class Editor extends HttpServlet {
                 ex = ex.getNextException();
                 }
         } 
+        if (date_created.equals("")){ //this means that the post id does not exist
+            send404(request, response);
+            return;
+        }
+
         request.setAttribute("title-len", title.length());
         request.setAttribute("title", title);
         request.setAttribute("date_created", date_created);
@@ -395,12 +423,13 @@ public class Editor extends HttpServlet {
             String title = request.getParameter("title");
             String postid = request.getParameter("postid");
             String body = request.getParameter("body");
-        
             for (int i= 0;i<postid.length();i++)
             {
                 if (!(Character.isDigit(postid.charAt(i))))
-                // Are we supposed to send a request
-                    System.out.println("PostId not valid");
+                {
+                send404(request, response);
+                
+                }
             }
             Parser parser = Parser.builder().build();
             HtmlRenderer renderer = HtmlRenderer.builder().build();
@@ -457,6 +486,10 @@ public class Editor extends HttpServlet {
                 int postid = Integer.parseInt(request.getParameter("postid"));
                 String date_created = "";
                 String date_modified = "";
+                if(username.equals("") || request.getParameter("postid").equals("") || title.equals("")){
+                    send404(request, response);
+                    return;
+                }
                 if (title == null)
                 {
                     title = ""; 
@@ -526,8 +559,11 @@ public class Editor extends HttpServlet {
                         rs= s.executeQuery();
                         
                         if (!rs.next())
-                            //send 404
-                            System.out.println("Send 404");
+                        {
+                            send404(request, response);
+                            return;
+
+                        }
                         
 
                         s = c.prepareStatement("UPDATE Posts SET title=?,body=?,modified=NOW() WHERE username =? AND postid =?;");
