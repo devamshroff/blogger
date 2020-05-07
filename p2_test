@@ -98,6 +98,7 @@ if [ $? -ne 0 ]; then
    error_exit "Failed to get response at ${URL}"
 fi
 response_code=`curl -s -o /dev/null -w "%{http_code}" ${URL}`
+echo $response_code
 if [ $response_code != "200" ]; then
 	error_exit "HTTP response code from ${URL} is incorrect"
 fi
