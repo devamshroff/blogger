@@ -6,8 +6,11 @@ var logger = require('morgan');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
-
+var blogRouter = require('./routes/blog')
 var app = express();
+
+// set client
+let client = require('./db');
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -21,6 +24,31 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+app.use('/blog', blogRouter);
+
+
+// connect to mongo on start
+client.connect('mongodb://localhost:27017/', function (err) {
+    if (err) {
+        console.log('Unable to connect to Mongo.');
+        process.exit(1);
+    } else {
+        // app.listen(3000, function () {
+        //     console.log('Listening on port 3000...');
+        // });
+    }
+});
+
+// this was for test, remove laters
+app.get('/list', function (req, res) {
+  let collection = client.db('BlogServer').collection('Users');
+  collection.find().toArray(function (err, docs) {
+      // res.render('users', {BlogServer: docs});
+      res.render('list_users', {users: docs})
+  });
+});
+
+//
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

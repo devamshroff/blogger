@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Users of Blogger</title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+  <body>
+    <p>Welcome to Blogger: </p>
+    <% for(let i = 0; i < users.length; i++) { %>
+        <li><%- users[i].username %></li>
+    <% } %>
+  </body>
+</html>

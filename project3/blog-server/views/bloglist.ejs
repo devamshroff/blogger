@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+  <body>
+    <p>Welcome to Blogger <%= username %>!</p>
+    <h2> Your Posts:</h2>
+    <% for(let i = start_ind; i < posts.length && i < start_ind + 5; i++) { %>
+        <li><%- posts[i].title %></li>
+    <% } %>
+    <%if (posts.length > start_ind + 5) { %>  
+        <% new_start = start_ind + 5 %>
+        <% var url = "/blog/" + username + "?start=" + new_start %>
+        <!-- <form id="next" method="POST" action=<%= url %>>
+            <input type="submit" value="Next"> 
+        </form> -->
+        <a id="next" href=<%= url %>><button>Next</button></a>
+        <% } %>
+  </body>
+</html>
