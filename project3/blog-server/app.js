@@ -8,7 +8,8 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var blogRouter = require('./routes/blog')
 var app = express();
-
+var loginRouter = require('./routes/login');
+app.use('/login', loginRouter)
 // set client
 let client = require('./db');
 
@@ -32,11 +33,11 @@ client.connect('mongodb://localhost:27017/', function (err) {
     if (err) {
         console.log('Unable to connect to Mongo.');
         process.exit(1);
-    } else {
-        // app.listen(3000, function () {
-        //     console.log('Listening on port 3000...');
-        // });
-    }
+    }// else {
+    //     app.listen(3000, function () {
+    //         console.log('Listening on port 3000...');
+    //     });
+    //}
 });
 
 // this was for test, remove laters

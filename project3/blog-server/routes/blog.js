@@ -1,8 +1,10 @@
 var express = require('express');
 var router = express.Router();
+var commonmark = require('commonmark');
 // set client
 let client = require('../db');
-
+var reader = new commonmark.Parser();
+var writer = new commonmark.HtmlRenderer();
 /* GET users listing. */
 // get rid of this get later, doesn't do anything
 router.get('/', function(req, res, next) {
@@ -35,13 +37,23 @@ router.get('/:username/:postid', function(req, res, next) {
         res.statusCode = 404;
         res.send('ERROR 404: PostID not found');  
       }
-      res.render('blog', {
-                          username: req.params.username,
-                          postid: req.params.postid,
-                          blog_post:docs[0]
-                        }
+  let title = reader.parse(docs[0].title);
+  let modified_title = writer.render(title);
+  let body = reader.parse(docs[0].body);
+  let modified_body = writer.render(body);
+  let modified_doc = {
+    title: modified_title,
+    body: modified_body
+  };
+  res.render('blog', {
+                        username: req.params.username,
+                        postid: req.params.postid,
+                        blog_post:modified_doc
+                      }
                 )
   });
+  
+
 });
 
 router.get('/:username', function(req, res, next) {
@@ -62,14 +74,28 @@ router.get('/:username', function(req, res, next) {
 
   collection = client.db('BlogServer').collection('Posts');
   collection.find({username: req.params.username}).toArray(function (err, docs) {
-    
+  let i = 0;
+  let modified_docs = [];
+  for (i=0;i<docs.length;i++)
+  {
+    let title = reader.parse(docs[i].title);
+    let modified_title = writer.render(title);
+    let body = reader.parse(docs[i].body);
+    let modified_body = writer.render(body);
+    let modified_doc = {
+      title: modified_title,
+      body: modified_body
+    };
+    modified_docs.push(modified_doc);
+  }
       res.render('bloglist', {
-                          posts: docs,
+                          posts: modified_docs,
                           username: req.params.username,
                           start_ind: start_ind
                           }
                 )
   });
+
 });
 
 module.exports = router;
