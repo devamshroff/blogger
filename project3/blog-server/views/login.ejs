@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+  <body>
+    <p>Welcome to Blogger!</p>
+    <h2> Login</h2>
+    <% 
+
+        if(redirect.length > 0) {
+            var url = "/login" + "?redirect=" + redirect
+        }else{
+            var url = "/login"
+        }
+    %>
+    
+   <form id="login" method="POST" action=<%= url %>>
+            <h3>Username</h3>
+            <input id="username" type="text" value="">
+            <h3>Password</h3>
+            <input id="password" type="text" value="">
+            <br>
+            <input type="submit" value="submit"> 
+    </form>
+    
+  </body>
+</html>
+
