@@ -29,10 +29,10 @@ router.get('/', function(req, res, next) {
     var redirect = req.query.redirect;
     console.log(username);
     let collection = client.db('BlogServer').collection('Users');
-    collection.findOne({username: username}).then(docs =>  {
+    collection.findOne({username: username}).then((docs) =>  {
     if(!docs){
         console.log("Problem1");
-        res.status(401).render('login', {
+        return res.status(401).render('login', {
           redirect: redirect
       });
     }
@@ -53,11 +53,11 @@ router.get('/', function(req, res, next) {
             
             if (redirect)
             {
-                res.redirect(redirect);  
+                return res.redirect(redirect);  
             }
             else
             {
-                res.status(200).send("Succesful Authentication");
+                return res.status(200).send("Succesful Authentication");
                 
             }
   
@@ -65,14 +65,14 @@ router.get('/', function(req, res, next) {
         else
         {
             console.log("Problem2");
-            res.status(401).render('login', {
+            return res.status(401).render('login', {
             redirect: redirect
         });
     
         }
       
   });
-      res.send("login received!");
+      
 }
   });
 

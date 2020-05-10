@@ -12,12 +12,9 @@ router.get('/', function(req, res, next) {
 });
 
 
-// NEED TO USE COMMONMARK MODULE TO CONVERT MARKDOWN (TITLE AND BODY) TO HTML
-// @NIKHIL COULD YOU DO THIS?
 // ALSO NEED TO DISPLAY STUFF LIKE DATE, MODIFIED INSIDE BLOGLIST.EJS
 
 router.get('/:username/:postid', function(req, res, next) {
-  // res.send('getting response from blog.js');
 
   let collection = client.db('BlogServer').collection('Users');
   collection.find({username: req.params.username}).toArray(function (err, docs) {
@@ -84,7 +81,10 @@ router.get('/:username', function(req, res, next) {
     let modified_body = writer.render(body);
     let modified_doc = {
       title: modified_title,
-      body: modified_body
+      body: modified_body,
+      created: Date(docs[i].created),
+      modified: Date(docs[i].modified),
+      postid: docs[i].postid
     };
     modified_docs.push(modified_doc);
   }
