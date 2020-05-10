@@ -1,5 +1,7 @@
 var express = require('express');
 var router = express.Router();
+var bcrypt = require('bcryptjs');
+var jwt = require('jsonwebtoken');
 // set client
 let client = require('../db');
 
@@ -21,11 +23,60 @@ router.get('/', function(req, res, next) {
 });
 
 // 
-router.post('/', function(req, res, next) {
-  // res.send('getting response from blog.js');
-    // get params like this: req.params.login, req.params.
-    // still have to set these params when doing the post request in login.ejs
-    res.send("login received!");
+ router.post('/', function(req, res, next) {
+    var username = req.body.username;
+    var password = req.body.password;
+    var redirect = req.query.redirect;
+    console.log(username);
+    let collection = client.db('BlogServer').collection('Users');
+    collection.findOne({username: username}).then(docs =>  {
+    if(!docs){
+        console.log("Problem1");
+        res.status(401).render('login', {
+          redirect: redirect
+      });
+    }
+    else {
+    let to_compare = docs.password;
+    bcrypt.compare(password, to_compare, function(err, result) {
+        if (result)
+        {
+            let expr = new Date((docs.created)+7200000);
+            let jwt_payload = 
+            {
+                "exp" : expr.getTime(),
+                "usr" : username
+            };
+            let jwt_token = jwt.sign(jwt_payload, "C-UFRaksvPKhx1txJYFcut3QGxsafPmwCY6SCly3G6c");
+            
+            res.cookie('jwt',jwt_token);
+            
+            if (redirect)
+            {
+                res.redirect(redirect);  
+            }
+            else
+            {
+                res.status(200).send("Succesful Authentication");
+                
+            }
+  
+        }
+        else
+        {
+            console.log("Problem2");
+            res.status(401).render('login', {
+            redirect: redirect
+        });
+    
+        }
+      
+  });
+      res.send("login received!");
+}
+  });
+
+
 });
 
 module.exports = router;
