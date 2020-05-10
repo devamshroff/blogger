@@ -38,8 +38,8 @@ router.get('/', function(req, res, next) {
     }
     else {
     let to_compare = docs.password;
-    bcrypt.compare(password, to_compare, function(err, result) {
-        if (result)
+    bcrypt.compare(password, to_compare, function(err,mod_res) {
+        if (mod_res)
         {
             let expr = new Date((docs.created)+7200000);
             let jwt_payload = 
@@ -80,4 +80,3 @@ router.get('/', function(req, res, next) {
 });
 
 module.exports = router;
-
