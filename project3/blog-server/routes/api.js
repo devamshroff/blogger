@@ -15,7 +15,7 @@ router.get('/:username', function(req, res, next) {
         return res.status(401).send('ERROR 401: Unauthorized Status Code, invalid signature');
     else if (jwt.decode(jwt_token).usr!=req.params.username)
         return res.status(401).send('ERROR 401: Unauthorized Status Code, invalid username');
-    else if (jwt.decode(jwt_token).expr<=(Date.now()/1000))
+    else if (jwt.decode(jwt_token).exp<=(Date.now()/1000))
         return res.status(401).send('ERROR 401: Unauthorized Status Code, past expiration');
 
     let collection = client.db('BlogServer').collection('Users');
@@ -42,7 +42,7 @@ router.get('/:username/:postid', function(req, res, next) {
         return res.status(401).send('ERROR 401: Unauthorized Status Code, invalid signature');
     else if (jwt.decode(jwt_token).usr!=req.params.username)
         return res.status(401).send('ERROR 401: Unauthorized Status Code, invalid username');
-    else if (jwt.decode(jwt_token).expr<=(Date.now()/1000))
+    else if (jwt.decode(jwt_token).exp<=(Date.now()/1000))
         return res.status(401).send('ERROR 401: Unauthorized Status Code, past expiration');
 
     let collection = client.db('BlogServer').collection('Users');
@@ -82,7 +82,7 @@ router.post('/:username/:postid', function(req, res, next) {
         return res.status(401).send('ERROR 401: Unauthorized Status Code, invalid signature');
     else if (jwt.decode(jwt_token).usr!=req.params.username)
         return res.status(401).send('ERROR 401: Unauthorized Status Code, invalid username');
-    else if (jwt.decode(jwt_token).expr<=(Date.now()/1000))
+    else if (jwt.decode(jwt_token).exp<=(Date.now()/1000))
         return res.status(401).send('ERROR 401: Unauthorized Status Code, past expiration');
 
     var d = new Date();
@@ -139,7 +139,7 @@ router.put('/:username/:postid', function(req, res, next) {
         return res.status(401).send('ERROR 401: Unauthorized Status Code, invalid signature');
     else if (jwt.decode(jwt_token).usr!=req.params.username)
         return res.status(401).send('ERROR 401: Unauthorized Status Code, invalid username');
-    else if (jwt.decode(jwt_token).expr<=(Date.now()/1000))
+    else if (jwt.decode(jwt_token).exp<=(Date.now()/1000))
         return res.status(401).send('ERROR 401: Unauthorized Status Code, past expiration');
 
     var title = req.body.title;
@@ -176,7 +176,7 @@ router.delete('/:username/:postid', function(req, res, next) {
         return res.status(401).send('ERROR 401: Unauthorized Status Code, invalid signature');
     else if (jwt.decode(jwt_token).usr!=req.params.username)
         return res.status(401).send('ERROR 401: Unauthorized Status Code, invalid username');
-    else if (jwt.decode(jwt_token).expr<=(Date.now()/1000))
+    else if (jwt.decode(jwt_token).exp<=(Date.now()/1000))
         return res.status(401).send('ERROR 401: Unauthorized Status Code, past expiration');
 
   
