@@ -1,4 +1,3 @@
-
 use BlogServer;
 
 db.createCollection("Posts");

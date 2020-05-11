@@ -8,6 +8,16 @@ let client = require('../db');
 
 // 1. GET /api/:username
 router.get('/:username', function(req, res, next) {
+    var jwt_token = req.cookies.jwt;
+    if (!jwt_token)
+        return res.status(401).send('ERROR 401: Unauthorized Status Code, invalid JWT token');
+    else if (!jwt.verify(jwt_token,"C-UFRaksvPKhx1txJYFcut3QGxsafPmwCY6SCly3G6c"))
+        return res.status(401).send('ERROR 401: Unauthorized Status Code, invalid signature');
+    else if (jwt.decode(jwt_token).usr!=req.params.username)
+        return res.status(401).send('ERROR 401: Unauthorized Status Code, invalid username');
+    else if (jwt.decode(jwt_token).expr<=(Date.now()/1000))
+        return res.status(401).send('ERROR 401: Unauthorized Status Code, past expiration');
+
     let collection = client.db('BlogServer').collection('Users');
     collection.findOne({username: req.params.username}).then((docs) =>  {
     if(docs.length == 0){
@@ -25,6 +35,16 @@ router.get('/:username', function(req, res, next) {
 
 // 2. GET /api/:username/:postid
 router.get('/:username/:postid', function(req, res, next) {
+    var jwt_token = req.cookies.jwt;
+    if (!jwt_token)
+        return res.status(401).send('ERROR 401: Unauthorized Status Code, invalid JWT token');
+    else if (!jwt.verify(jwt_token,"C-UFRaksvPKhx1txJYFcut3QGxsafPmwCY6SCly3G6c"))
+        return res.status(401).send('ERROR 401: Unauthorized Status Code, invalid signature');
+    else if (jwt.decode(jwt_token).usr!=req.params.username)
+        return res.status(401).send('ERROR 401: Unauthorized Status Code, invalid username');
+    else if (jwt.decode(jwt_token).expr<=(Date.now()/1000))
+        return res.status(401).send('ERROR 401: Unauthorized Status Code, past expiration');
+
     let collection = client.db('BlogServer').collection('Users');
     let postid= parseInt(req.params.postid);
     if (!postid)
@@ -55,6 +75,16 @@ router.get('/:username/:postid', function(req, res, next) {
 // 3. POST /api/:username/:postid
 // insert new blog
 router.post('/:username/:postid', function(req, res, next) {
+    var jwt_token = req.cookies.jwt;
+    if (!jwt_token)
+        return res.status(401).send('ERROR 401: Unauthorized Status Code, invalid JWT token');
+    else if (!jwt.verify(jwt_token,"C-UFRaksvPKhx1txJYFcut3QGxsafPmwCY6SCly3G6c"))
+        return res.status(401).send('ERROR 401: Unauthorized Status Code, invalid signature');
+    else if (jwt.decode(jwt_token).usr!=req.params.username)
+        return res.status(401).send('ERROR 401: Unauthorized Status Code, invalid username');
+    else if (jwt.decode(jwt_token).expr<=(Date.now()/1000))
+        return res.status(401).send('ERROR 401: Unauthorized Status Code, past expiration');
+
     var d = new Date();
     let postid= parseInt(req.params.postid);
     if (!postid)
@@ -99,7 +129,19 @@ router.post('/:username/:postid', function(req, res, next) {
     
 });
 
+// 4. PUT /api/:username/:postid
+// Update a blog post
 router.put('/:username/:postid', function(req, res, next) {
+    var jwt_token = req.cookies.jwt;
+    if (!jwt_token)
+        return res.status(401).send('ERROR 401: Unauthorized Status Code, invalid JWT token');
+    else if (!jwt.verify(jwt_token,"C-UFRaksvPKhx1txJYFcut3QGxsafPmwCY6SCly3G6c"))
+        return res.status(401).send('ERROR 401: Unauthorized Status Code, invalid signature');
+    else if (jwt.decode(jwt_token).usr!=req.params.username)
+        return res.status(401).send('ERROR 401: Unauthorized Status Code, invalid username');
+    else if (jwt.decode(jwt_token).expr<=(Date.now()/1000))
+        return res.status(401).send('ERROR 401: Unauthorized Status Code, past expiration');
+
     var title = req.body.title;
     var body = req.body.body;
     var date = new Date();
@@ -124,7 +166,19 @@ router.put('/:username/:postid', function(req, res, next) {
 
 });
 
+// 5. DELETE /api/:username/:postid
+// Delete a blog post
 router.delete('/:username/:postid', function(req, res, next) {
+    var jwt_token = req.cookies.jwt;
+    if (!jwt_token)
+        return res.status(401).send('ERROR 401: Unauthorized Status Code, invalid JWT token');
+    else if (!jwt.verify(jwt_token,"C-UFRaksvPKhx1txJYFcut3QGxsafPmwCY6SCly3G6c"))
+        return res.status(401).send('ERROR 401: Unauthorized Status Code, invalid signature');
+    else if (jwt.decode(jwt_token).usr!=req.params.username)
+        return res.status(401).send('ERROR 401: Unauthorized Status Code, invalid username');
+    else if (jwt.decode(jwt_token).expr<=(Date.now()/1000))
+        return res.status(401).send('ERROR 401: Unauthorized Status Code, past expiration');
+
   
     let postid= parseInt(req.params.postid);
     if (!postid)
@@ -140,7 +194,7 @@ router.delete('/:username/:postid', function(req, res, next) {
         res.status(400).send("400 (Bad request)");
         return;
     }
-    res.status(200).send("Document deleted");
+    res.status(204).send("Document deleted");
     })
     .catch(err => res.status(400).send("400 (Bad request)"));
 

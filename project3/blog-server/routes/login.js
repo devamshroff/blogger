@@ -41,13 +41,23 @@ router.get('/', function(req, res, next) {
     bcrypt.compare(password, to_compare, function(err,mod_res) {
         if (mod_res)
         {
-            let expr = new Date((docs.created)+7200000);
+            let expr = Date.now()+7200000;
+            console.log("Time");
+            console.log(expr);
             let jwt_payload = 
             {
-                "exp" : expr.getTime(),
+                "exp" : (expr/1000),
                 "usr" : username
             };
-            let jwt_token = jwt.sign(jwt_payload, "C-UFRaksvPKhx1txJYFcut3QGxsafPmwCY6SCly3G6c");
+            let jwt_header = 
+            {
+                header: 
+                {
+                    "alg": "HS256",
+                    "typ": "JWT"
+                }
+            };
+            let jwt_token = jwt.sign(jwt_payload, "C-UFRaksvPKhx1txJYFcut3QGxsafPmwCY6SCly3G6c",jwt_header);
             
             res.cookie('jwt',jwt_token);
             
