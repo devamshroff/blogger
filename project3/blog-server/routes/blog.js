@@ -17,7 +17,7 @@ router.get('/', function(req, res, next) {
 router.get('/:username/:postid', function(req, res, next) {
 
   let collection = client.db('BlogServer').collection('Users');
-  collection.find({username: req.params.username}).toArray(function (err, docs) {
+  collection.find({username: req.params.username}).toArray().then((docs) =>  {
     if(docs.length == 0){
       res.statusCode = 404;
       res.send('ERROR 404: Username not found');
@@ -29,7 +29,7 @@ router.get('/:username/:postid', function(req, res, next) {
   collection.find({
     username: req.params.username, 
     postid: parseInt(req.params.postid, 10)
-    }).toArray(function (err, docs) {
+    }).toArray().then((docs) =>  {
       if(docs.length == 0){
         res.statusCode = 404;
         res.send('ERROR 404: PostID not found');  
@@ -62,7 +62,7 @@ router.get('/:username', function(req, res, next) {
     }
   }
   let collection = client.db('BlogServer').collection('Users');
-  collection.find({username: req.params.username}).toArray(function (err, docs) {
+  collection.find({username: req.params.username}).toArray().then((docs) =>  {
     if(docs.length == 0){
       res.statusCode = 404;
       res.send('ERROR 404: Username not found');
@@ -70,30 +70,30 @@ router.get('/:username', function(req, res, next) {
   });
 
   collection = client.db('BlogServer').collection('Posts');
-  collection.find({username: req.params.username}).toArray(function (err, docs) {
-  let i = 0;
-  let modified_docs = [];
-  for (i=0;i<docs.length;i++)
-  {
-    let title = reader.parse(docs[i].title);
-    let modified_title = writer.render(title);
-    let body = reader.parse(docs[i].body);
-    let modified_body = writer.render(body);
-    let modified_doc = {
-      title: modified_title,
-      body: modified_body,
-      created: Date(docs[i].created),
-      modified: Date(docs[i].modified),
-      postid: docs[i].postid
-    };
-    modified_docs.push(modified_doc);
-  }
+  collection.find({username: req.params.username}).toArray().then((docs) => {
+    let i = 0;
+    let modified_docs = [];
+    for (i=0;i<docs.length;i++)
+    {
+      let title = reader.parse(docs[i].title);
+      let modified_title = writer.render(title);
+      let body = reader.parse(docs[i].body);
+      let modified_body = writer.render(body);
+      let modified_doc = {
+        title: modified_title,
+        body: modified_body,
+        created: Date(docs[i].created),
+        modified: Date(docs[i].modified),
+        postid: docs[i].postid,
+        body: docs[i].body
+      };
+      modified_docs.push(modified_doc);
+    }
       res.render('bloglist', {
-                          posts: modified_docs,
-                          username: req.params.username,
-                          start_ind: start_ind
-                          }
-                )
+        posts: modified_docs,
+        username: req.params.username,
+        start_ind: start_ind
+      });
   });
 
 });

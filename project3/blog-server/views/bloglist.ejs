@@ -12,6 +12,7 @@
         <th>Title</th>
         <th>Date Created</th>
         <th>Last Modified</th>
+        <th>Body</th>
       </tr>
     <% for(let i = start_ind; i < posts.length && i < start_ind + 5; i++) { %>
         <tr>
@@ -19,6 +20,7 @@
           <td><%- posts[i].title %></td>
           <td><%- posts[i].created %></td>
           <td><%- posts[i].modified %></td>
+          <td><%- posts[i].body %></td>
         </tr>
     <% } %>
   </table>
