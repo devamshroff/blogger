@@ -45,6 +45,7 @@ export class ListComponent implements OnInit {
       {
         
         this.bs.setCurrentDraft(post);
+        console.log(post);
   
       });
       this.router.navigate(['/edit/', postid]);
