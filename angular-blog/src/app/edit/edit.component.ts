@@ -47,7 +47,7 @@ export class EditComponent implements OnInit {
 
   preview(): void
   {
-    
+    this.router.navigate(['/preview/', this.post_id]);
   }
 
   delete(): void

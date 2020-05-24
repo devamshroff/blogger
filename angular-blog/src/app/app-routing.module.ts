@@ -1,11 +1,11 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { EditComponent } from './edit/edit.component';
-// import { ListComponent } from './list/list.component';
+import { PreviewComponent } from './preview/preview.component';
 
 const routes: Routes = [
-  { path: 'edit/:id', component: EditComponent }
-  // TODO: add {path: 'preview/:id', component: PreviewComponent }
+  { path: 'edit/:id', component: EditComponent },
+  {path: 'preview/:id', component: PreviewComponent }
   // after preview component is implemented
 ];
 
