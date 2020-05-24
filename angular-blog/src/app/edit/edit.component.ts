@@ -12,15 +12,17 @@ import { Observable } from 'rxjs';
 })
 export class EditComponent implements OnInit {
   c_post: Post;
+  post_id: number;
   constructor(private bs : BlogService, private router: Router, private route: ActivatedRoute) 
   { 
     let id;
     console.log("test");
     let username = parseJWT(document.cookie).usr;
-    this.route.params.subscribe( postid =>
+    this.route.params.subscribe( posti =>
       {
-          id = (postid.id);
+          id = (posti.id);
           let holder = Promise.resolve(this.bs.getPost(username,id));
+          this.post_id =id;
           let post;
           holder.then(post =>
             {
@@ -37,7 +39,10 @@ export class EditComponent implements OnInit {
 
   save(): void
   {
-
+    let post = this.bs.getCurrentDraft();
+    let username = parseJWT(document.cookie).usr;
+    this.bs.updatePost(username,post);
+    
   }
 
   preview(): void
@@ -47,7 +52,8 @@ export class EditComponent implements OnInit {
 
   delete(): void
   {
-    
+    let username = parseJWT(document.cookie).usr;
+    this.bs.deletePost(username,this.post_id);
   }
 
 }
