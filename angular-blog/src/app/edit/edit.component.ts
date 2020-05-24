@@ -54,6 +54,7 @@ export class EditComponent implements OnInit {
   {
     let username = parseJWT(document.cookie).usr;
     this.bs.deletePost(username,this.post_id);
+    this.router.navigate(['/']);
   }
 
 }
