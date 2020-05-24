@@ -10,10 +10,9 @@
             <textarea id="body" name="body" [(ngModel)]="c_post.body" placeholder = "post_body"></textarea> 
         </div>
     </form>
-    <div>
-        <label for="modified">Last Modified:</label>
-        <input type="text" id="modified" name="modified" [(ngModel)]="c_post.modified" placeholder = "post_modified" /> 
-    </div>
+    <p>Last Modified: {{c_post.modified}}</p>
+        
+    
     <button (click)="delete()">delete</button>
     <button (click)="save()">save</button>
     <button (click)="preview()">preview</button>

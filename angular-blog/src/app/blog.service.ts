@@ -56,6 +56,7 @@ export class BlogService {
   };
 
   async updatePost(username: string, post: Post): Promise<void>{
+    
     return fetch(`api/${username}/${post.postid}`,
       {
         method: 'PUT',

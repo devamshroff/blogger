@@ -39,9 +39,9 @@ export class EditComponent implements OnInit {
 
   save(): void
   {
-    let post = this.bs.getCurrentDraft();
+    
     let username = parseJWT(document.cookie).usr;
-    this.bs.updatePost(username,post);
+    this.bs.updatePost(username,this.c_post);
     
   }
 
