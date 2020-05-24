@@ -46,6 +46,7 @@ export class BlogService {
         body: JSON.stringify({"body": post.body, "title": post.title}),
       }
     ).then(response => {
+      
       if(!response.ok){
         throw new Error(response.statusText)
       }
