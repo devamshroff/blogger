@@ -21,12 +21,17 @@ export class ListComponent implements OnInit {
   ngOnInit(): void 
   {
     let username = parseJWT(document.cookie).usr;
+  
     let holder = Promise.resolve(this.bs.fetchPosts(username));
+    this.post_list = [];
     let second;
-    holder.then(second)
+    holder.then(second =>
     {
+      console.log(second);
       this.post_list = second;
-    }
+
+    });
+    
   }
   
   newPost(): void

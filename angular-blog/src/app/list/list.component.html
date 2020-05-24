@@ -1,3 +1,4 @@
+
 <div> 
     <button (click)="newPost()">New Post</button>
     <a *ngFor = "let i of post_list" [routerLink]="['/edit/',i.postid]">
