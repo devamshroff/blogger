@@ -1,0 +1,9 @@
+<div> 
+    <button (click)="newPost()">New Post</button>
+    <a *ngFor = "let i of post_list" [routerLink]="['/edit/',i.postid]">
+        <div>
+            <span>{{i.created}}</span>
+            <span>{{i.title}}</span>
+        </div>   
+    </a>  
+</div>
