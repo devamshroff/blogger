@@ -60,7 +60,7 @@ export class ListComponent implements OnInit {
     }
     console.log(postid);
     let created = new Date(Date.now());
-    let post =  {postid: postid, created: created, modified: created,title: "",body:"" };
+    let post =  {postid: postid, created: created, modified: created,title: "title",body:"body"};
     console.log(post);
     this.bs.setCurrentDraft(post);
     this.bs.newPost(username,post);

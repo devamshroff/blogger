@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, HostBinding } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
 export class Post {
@@ -38,15 +38,16 @@ export class BlogService {
   };
 
   async newPost(username: string, post: Post): Promise<void>{
-    return fetch(`api/${username}/${post.postid}`,{
+    return fetch(`api/${username}/${post.postid}`,
+      {
         method: 'POST',
         headers: {
+          // 'Accept': 'application/json',
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({"body": post.body, "title": post.title}),
+        body: JSON.stringify({body: post.body, title: post.title}),
       }
     ).then(response => {
-      
       if(!response.ok){
         throw new Error(response.statusText)
       }
@@ -61,7 +62,7 @@ export class BlogService {
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({"body": post.body, "title": post.title}),
+        body: JSON.stringify({body: post.body, title: post.title}),
       }
     ).then(response => {
       if(!response.ok){
