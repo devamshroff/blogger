@@ -96,9 +96,8 @@ router.post('/:username/:postid', function(req, res, next) {
     console.log(req.body.title);
     console.log(req.body.body);
     if(!req.body.title || !req.body.body){
-        console.log("no title or body");
-        res.status(400).send("400 (Bad request)");
-        return;
+        req.body.title = "";
+        req.body.body = "";
     }
     // check username + postid
     let collection = client.db('BlogServer').collection('Posts');
@@ -107,7 +106,6 @@ router.post('/:username/:postid', function(req, res, next) {
         username: req.params.username
     }).then((docs) =>  {
     if(docs){
-        console.log("found existing post");
         res.status(400).send("400 (Bad request)");
         return;
     }else{
@@ -121,7 +119,6 @@ router.post('/:username/:postid', function(req, res, next) {
             "body": req.body.body
         }).then((docs) =>{
             if (!docs){
-                console.log("db failed");
                 res.status(400).send("400 (Bad request)");
                 return;
             }
