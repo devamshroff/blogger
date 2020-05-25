@@ -13,7 +13,7 @@ import { Observable } from 'rxjs';
 
 export class ListComponent implements OnInit {
   post_list: Post[];
-  
+  max_id: number;
   constructor(private bs : BlogService,  private router: Router) 
   { 
     
@@ -22,16 +22,29 @@ export class ListComponent implements OnInit {
   ngOnInit(): void 
   {
     let username = parseJWT(document.cookie).usr;
-  
+    
+    
     let holder = Promise.resolve(this.bs.fetchPosts(username));
     this.post_list = [];
     let second;
     holder.then(second =>
     {
       
+      let len = second.length;
+      if (len-1 >=0)
+      {
+        if (second[len-1].postid==-1)
+        {
+          this.bs.deletePost(username,-1);
+          second.pop();
+        }
+      }
+
       this.post_list = second;
+      
 
     });
+    
     
   }
   openPost(postid)
@@ -45,7 +58,7 @@ export class ListComponent implements OnInit {
       {
         
         this.bs.setCurrentDraft(post);
-        console.log(post);
+        
   
       });
       this.router.navigate(['/edit/', postid]);
@@ -59,12 +72,13 @@ export class ListComponent implements OnInit {
     {
       postid = this.post_list[i].postid + 1;
     }
-    console.log(postid);
+    
     let created = new Date(Date.now());
     let blank =" ";
-    let post =  {postid: postid, created: created, modified: created,title: blank,body:blank};
+    let post =  {postid: -1, created: created, modified: created,title: blank,body:blank};
     this.bs.setCurrentDraft(post);
     this.bs.newPost(username,post);
+    console.log(post);
     this.router.navigate(['/edit/', postid]);
   }
 
