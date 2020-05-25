@@ -123,7 +123,11 @@ export class EditComponent implements OnInit {
     this.router.navigate(['/']);
     
   }
-
+  toDate(date)
+  {
+    let date1 = new Date(date);
+    return date1 ;
+  }
 }
 function parseJWT(token) 
 {

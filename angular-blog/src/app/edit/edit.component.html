@@ -1,20 +1,17 @@
-
 <div *ngIf="c_post">
     <form>
         <div>
-            <label for="title">Title:</label>
+            <label for="title">Title:</label><br>   
             <input type="text" id="title" name="title" [(ngModel)]="c_post.title" placeholder = "post_title" /> 
         </div>
         <div>
-            <label for="body">Body:</label>
+            <label for="body">Body:</label><br>
             <textarea id="body" name="body" [(ngModel)]="c_post.body" placeholder = "post_body"></textarea> 
         </div>
     </form>
-    <p>Last Modified: {{c_post.modified}}</p>
-        
-    
+    <label>Last Modified: {{toDate(c_post.modified)}}</label><br>
     <button (click)="delete()">delete</button>
     <button (click)="save()">save</button>
     <button (click)="preview()">preview</button>
-    
 </div>
+
