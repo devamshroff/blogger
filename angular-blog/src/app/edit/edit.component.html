@@ -9,7 +9,7 @@
             <textarea id="body" name="body" [(ngModel)]="c_post.body" placeholder = "post_body"></textarea> 
         </div>
     </form>
-    <label>Last Modified: {{toDate(c_post.modified)}}</label><br>
+    <label>Last Modified:</label> <h4>{{toDate(c_post.modified)}}</h4><br>
     <button (click)="delete()">delete</button>
     <button (click)="save()">save</button>
     <button (click)="preview()">preview</button>
