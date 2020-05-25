@@ -66,7 +66,7 @@ export class EditComponent implements OnInit {
               this.bs.setCurrentDraft(this.c_post);
             
           
-            console.log(this.c_post);
+            
           
   
             });
@@ -95,17 +95,30 @@ export class EditComponent implements OnInit {
     {
       
       this.c_post.postid = this.param_id;
-      console.log(this.c_post);
+      this.post_id=this.param_id;
       this.bs.deletePost(username,-1);
       this.bs.newPost(username,this.c_post);
     }
     else
     {
+      this.c_post.modified= new Date(Date.now());
       this.bs.updatePost(username,this.c_post);
     }
-
+    let holder = Promise.resolve(this.bs.fetchPosts(username));
+    let post_list = [];
+    if (holder)
+    {
+      holder.then(second =>
+      {
+        post_list = second;
+        console.log(post_list);
+        this.bs.sendQuery(post_list);
+        
+      });
+    }
     this.bs.setCurrentDraft(this.c_post);
-    location.reload();
+    //location.reload();
+    
     
   }
 

@@ -95,8 +95,11 @@ router.post('/:username/:postid', function(req, res, next) {
     var modified = d.getTime();
     console.log(req.body.title);
     console.log(req.body.body);
-    if(!req.body.title || !req.body.body){
+    if(!req.body.title){
         req.body.title = "";
+    }
+    if(!req.body.body)
+    {
         req.body.body = "";
     }
     // check username + postid
