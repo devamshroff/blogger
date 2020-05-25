@@ -21,6 +21,7 @@ export class ListComponent implements OnInit {
 
   ngOnInit(): void 
   {
+    this.bs.subscribe((suggestions) => { this.post_list = suggestions; });
     console.log("Interesing");
     let username = parseJWT(document.cookie).usr;
     
@@ -44,7 +45,7 @@ export class ListComponent implements OnInit {
         } 
 
         this.post_list = second;
-      
+        this.bs.subscribe((suggestions) => { this.post_list = suggestions; });
 
       });
     }

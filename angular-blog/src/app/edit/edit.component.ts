@@ -120,7 +120,20 @@ export class EditComponent implements OnInit {
     let username = parseJWT(document.cookie).usr;
     this.bs.deletePost(username,this.post_id);
     //location.reload();
-    this.router.navigate(['/']);
+    let holder = Promise.resolve(this.bs.fetchPosts(username));
+    let post_list = [];
+    if (holder)
+    {
+      holder.then(second =>
+      {
+        post_list = second;
+        this.bs.sendQuery(post_list);
+        this.router.navigate(['/']);
+      });
+    }
+    else
+      this.router.navigate(['/']);
+    
     
   }
   toDate(date)

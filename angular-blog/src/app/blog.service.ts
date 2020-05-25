@@ -19,6 +19,24 @@ export class BlogService {
   constructor(private http: HttpClient) { 
     this.draft = null;
   }
+
+  callback = null;
+
+
+  subscribe(callback)
+  {
+    this.callback = callback;  
+  }
+
+  sendQuery(query: Post[]) 
+  {
+    this.processDelete(query);
+  
+  }
+  processDelete(posts)
+  {
+    if (this.callback) this.callback(posts);
+  }
   async fetchPosts(username: string): Promise<Post[]>{
     return fetch(`api/${username}`).then(response => {
       if(!response.ok){
