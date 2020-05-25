@@ -23,6 +23,27 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+
+// editor jwt check
+var bcrypt = require('bcryptjs');
+var jwt = require('jsonwebtoken');
+app.get('/editor', function (req, res, next){
+  // console.log("im here in this editor function");
+  var jwt_token = req.cookies.jwt;
+    if (!jwt_token){
+        // console.log("A");
+        return res.redirect('/login?redirect=/editor/'); //res.status(401).send('ERROR 401: Unauthorized Status Code, invalid JWT token');
+    } else if (!jwt.verify(jwt_token,"C-UFRaksvPKhx1txJYFcut3QGxsafPmwCY6SCly3G6c")){
+        // console.log("B");
+        return res.redirect('/login?redirect=/editor/'); //res.status(401).send('ERROR 401: Unauthorized Status Code, invalid signature');
+    }
+    else if (jwt.decode(jwt_token).exp<=(Date.now()/1000)){
+        // console.log("D");
+        return res.redirect('/login?redirect=/editor/');// return res.status(401).send('ERROR 401: Unauthorized Status Code, past expiration');
+    }
+    next();
+});
+
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);

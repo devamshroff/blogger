@@ -26,7 +26,11 @@ router.get('/', function(req, res, next) {
  router.post('/', function(req, res, next) {
     var username = req.body.username;
     var password = req.body.password;
-    var redirect = req.body.redirect;
+    var redirect;
+    if (req.body.redirect)
+        redirect = req.body.redirect;
+    else
+        redirect = req.query.redirect;
     console.log(username);
     let collection = client.db('BlogServer').collection('Users');
     collection.findOne({username: username}).then((docs) =>  {

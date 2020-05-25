@@ -38,7 +38,7 @@ export class BlogService {
     if (this.callback) this.callback(posts);
   }
   async fetchPosts(username: string): Promise<Post[]>{
-    return fetch(`api/${username}`).then(response => {
+    return fetch(`/api/${username}`).then(response => {
       if(!response.ok){
         throw new Error(response.statusText)
       }
@@ -47,7 +47,7 @@ export class BlogService {
   };
 
   async getPost(username: string, postid: number): Promise<Post>{
-    return fetch(`api/${username}/${postid}`).then(response => {
+    return fetch(`/api/${username}/${postid}`).then(response => {
       if(!response.ok){
         throw new Error(response.statusText)
       }
@@ -56,7 +56,7 @@ export class BlogService {
   };
 
   async newPost(username: string, post: Post): Promise<void>{
-    return fetch(`api/${username}/${post.postid}`,
+    return fetch(`/api/${username}/${post.postid}`,
       {
         method: 'POST',
         headers: {
@@ -75,7 +75,7 @@ export class BlogService {
 
   async updatePost(username: string, post: Post): Promise<void>{
     
-    return fetch(`api/${username}/${post.postid}`,
+    return fetch(`/api/${username}/${post.postid}`,
       {
         method: 'PUT',
         headers: {
@@ -92,7 +92,7 @@ export class BlogService {
   };
 
   async deletePost(username: string, postid: number): Promise<void>{
-    return fetch(`api/${username}/${postid}`,
+    return fetch(`/api/${username}/${postid}`,
       {
         method: 'DELETE',
         headers: {
