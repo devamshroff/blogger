@@ -15,17 +15,19 @@ export class EditComponent implements OnInit {
   c_post: Post;
   post_id: number;
   param_id: number;
+  length: number;
   constructor(private bs : BlogService, private router: Router, private route: ActivatedRoute) 
   { 
+    
     let id;
-    console.log("editTest");
+    
     let username = parseJWT(document.cookie).usr;
     //this.c_post=this.bs.getCurrentDraft();
     
     
     this.route.params.subscribe( posti =>
       {
-          id = (posti.id);
+          id = parseInt(posti.id);
           this.post_id =id;
           this.param_id = id;
           let username = parseJWT(document.cookie).usr;
@@ -35,7 +37,7 @@ export class EditComponent implements OnInit {
           holder2.then(second =>
           {
             let len = second.length;
-            
+            this.length = len;
             if (len-1 >=0)
             {
               if (second[len-1].postid==-1)
@@ -49,7 +51,9 @@ export class EditComponent implements OnInit {
     
             holder.then(post =>
             {
-            
+              let temp = post;
+              post.created = new Date(temp.created);
+              post.modified = new Date(temp.modified);
               this.c_post=post;
               let holder2= this.bs.getCurrentDraft();
               if (holder2)
@@ -85,17 +89,23 @@ export class EditComponent implements OnInit {
   save(): void
   {
     let username = parseJWT(document.cookie).usr;
+    console.log(this.post_id);
+    console.log(this.param_id);
     if (this.post_id==-1)
     {
-
+      
       this.c_post.postid = this.param_id;
+      console.log(this.c_post);
       this.bs.deletePost(username,-1);
       this.bs.newPost(username,this.c_post);
     }
     else
+    {
       this.bs.updatePost(username,this.c_post);
+    }
 
     this.bs.setCurrentDraft(this.c_post);
+    location.reload();
     
   }
 
@@ -109,7 +119,9 @@ export class EditComponent implements OnInit {
   {
     let username = parseJWT(document.cookie).usr;
     this.bs.deletePost(username,this.post_id);
+    //location.reload();
     this.router.navigate(['/']);
+    
   }
 
 }

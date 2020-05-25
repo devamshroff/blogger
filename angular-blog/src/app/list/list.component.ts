@@ -21,29 +21,34 @@ export class ListComponent implements OnInit {
 
   ngOnInit(): void 
   {
+    console.log("Interesing");
     let username = parseJWT(document.cookie).usr;
     
     
     let holder = Promise.resolve(this.bs.fetchPosts(username));
     this.post_list = [];
     let second;
-    holder.then(second =>
+    if (holder)
     {
-      
-      let len = second.length;
-      if (len-1 >=0)
+      holder.then(second =>
       {
-        if (second[len-1].postid==-1)
+      
+        let len = second.length;
+        if (len-1 >=0)
         {
-          this.bs.deletePost(username,-1);
-          second.pop();
-        }
-      }
+         if (second[len-1].postid==-1)
+         {
+           this.bs.deletePost(username,-1);
+           second.pop();
+         }
+        } 
 
-      this.post_list = second;
+        this.post_list = second;
       
 
-    });
+      });
+    }
+    // location.reload();
     
     
   }
@@ -67,7 +72,7 @@ export class ListComponent implements OnInit {
   {
     let username = parseJWT(document.cookie).usr;
     let i = this.post_list.length -1;
-    let postid=0;
+    let postid=1;
     if (i!=-1)
     {
       postid = this.post_list[i].postid + 1;
@@ -78,10 +83,15 @@ export class ListComponent implements OnInit {
     let post =  {postid: -1, created: created, modified: created,title: blank,body:blank};
     this.bs.setCurrentDraft(post);
     this.bs.newPost(username,post);
-    console.log(post);
+    
     this.router.navigate(['/edit/', postid]);
   }
 
+  toDate(date)
+  {
+    let date1 = new Date(date);
+    return date1 ;
+  }
 }
 function parseJWT(token) 
 {
@@ -89,3 +99,4 @@ function parseJWT(token)
     let base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
     return JSON.parse(atob(base64));
 }
+
