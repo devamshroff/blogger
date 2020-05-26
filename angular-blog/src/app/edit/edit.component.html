@@ -2,11 +2,11 @@
     <form>
         <div>
             <label for="title">Title:</label><br>   
-            <input type="text" id="title" name="title" [(ngModel)]="c_post.title" placeholder = "post_title" /> 
+            <input type="text" id="title" name="title" [(ngModel)]="c_post.title"  > 
         </div>
         <div>
             <label for="body">Body:</label><br>
-            <textarea id="body" name="body" [(ngModel)]="c_post.body" placeholder = "post_body"></textarea> 
+            <textarea id="body" name="body" [(ngModel)]="c_post.body" ></textarea> 
         </div>
     </form>
     <label>Last Modified:</label> <h4>{{toDate(c_post.modified)}}</h4><br>

@@ -81,7 +81,7 @@ export class ListComponent implements OnInit {
     
     let created = new Date(Date.now());
     let blank ="";
-    let post =  {postid: -1, created: created, modified: created,title: blank,body:blank};
+    let post =  {postid: -1, created: created, modified: null,title: blank,body:blank};
     this.bs.setCurrentDraft(post);
     this.bs.newPost(username,post);
     

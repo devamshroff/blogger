@@ -55,12 +55,14 @@ export class EditComponent implements OnInit {
               post.created = new Date(temp.created);
               post.modified = new Date(temp.modified);
               this.c_post=post;
+              console.log(this.c_post);
               let holder2= this.bs.getCurrentDraft();
               if (holder2)
               {
                 if (holder2!=this.c_post)
                 {
                   this.c_post=holder2;
+                  console.log(this.c_post);
                 }
               }
               this.bs.setCurrentDraft(this.c_post);
@@ -88,6 +90,7 @@ export class EditComponent implements OnInit {
 
   save(): void
   {
+    
     let username = parseJWT(document.cookie).usr;
     console.log(this.post_id);
     console.log(this.param_id);
@@ -97,6 +100,8 @@ export class EditComponent implements OnInit {
       this.c_post.postid = this.param_id;
       this.post_id=this.param_id;
       this.bs.deletePost(username,-1);
+      this.c_post.modified= new Date(Date.now());
+      this.c_post.created= new Date(Date.now());
       this.bs.newPost(username,this.c_post);
     }
     else
@@ -151,6 +156,8 @@ export class EditComponent implements OnInit {
   }
   toDate(date)
   {
+    if (!date)
+      return "";
     let date1 = new Date(date);
     return date1 ;
   }
