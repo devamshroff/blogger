@@ -1,0 +1,38 @@
+[
+    { "Id": 1,
+      "Test": "read_tomcat",
+      "Number Of Users": 200,
+      "Total Number Of Req": 6363,
+      "Total RPS": 128.2,
+      "Request Distribution": [
+        {"name": "GET /editor/post?action=open", "98%": 200}
+      ]
+    },
+    { "Id": 2,
+      "Test": "write_tomcat",
+      "Number Of Users": 200,
+      "Total Number Of Req": 6453,
+      "Total RPS": 130.6,
+      "Request Distribution": [
+        {"name": "POST /editor/post?action=save", "98%": 82}
+      ]
+    }, //TODO: FILL OUT STATS FOR READ_NODE AND WRITE_NODE @NIKHIL
+    { "Id": 4,
+      "Test": "read_node",
+      "Number Of Users": 0,
+      "Total Number Of Req": 0,
+      "Total RPS": 0,
+      "Request Distribution": [
+        {"name": "GET /blog/cs144", "98%": 0}
+      ]
+    },
+    { "Id": 5,
+      "Test": "write_node",
+      "Number Of Users": 0,
+      "Total Number Of Req": 0,
+      "Total RPS": 0,
+      "Request Distribution": [
+        {"name": "PUT /api/cs144", "98%": 0}
+      ]
+    }
+  ]
