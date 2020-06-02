@@ -16,14 +16,14 @@
       "Request Distribution": [
         {"name": "POST /editor/post?action=save", "98%": 82}
       ]
-    }, //TODO: FILL OUT STATS FOR READ_NODE AND WRITE_NODE @NIKHIL
+    }, 
     { "Id": 4,
       "Test": "read_node",
-      "Number Of Users": 0,
-      "Total Number Of Req": 0,
-      "Total RPS": 0,
+      "Number Of Users": 200,
+      "Total Number Of Req": 6817,
+      "Total RPS": 134,
       "Request Distribution": [
-        {"name": "GET /blog/cs144", "98%": 0}
+        {"name": "GET /blog/cs144", "98%": 39}
       ]
     },
     { "Id": 5,
